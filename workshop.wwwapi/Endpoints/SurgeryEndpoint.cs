@@ -12,18 +12,27 @@ namespace workshop.wwwapi.Endpoints
         {
             var surgeryGroup = app.MapGroup("surgery");
 
-            surgeryGroup.MapGet("/patients", GetPatients);
-            surgeryGroup.MapGet("/doctors", GetDoctors);
-            surgeryGroup.MapGet("/appointmentsbydoctor/{id}", GetAppointmentsByDoctor);
-            surgeryGroup.MapGet("/appointmentsbypatient/{id}", GetAppointmentsByPatient);
-            surgeryGroup.MapGet("/doctors{id}", GetDoctorById);
+            surgeryGroup.MapGet("/patients", GetPatients); // TESTED
+            surgeryGroup.MapGet("/doctors", GetDoctors); //TESTED
+            surgeryGroup.MapGet("/appointmentsbydoctor/{id}", GetAppointmentsByDoctor); // TESTED
+            surgeryGroup.MapGet("/appointmentsbypatient/{id}", GetAppointmentsByPatient); // TESTED
+            surgeryGroup.MapGet("/doctors{id}", GetDoctorById); // TESTED
 
-            surgeryGroup.MapGet("/patients{id}", GetPatientById);
-            surgeryGroup.MapPost("/patients", CreatePatient);
+            surgeryGroup.MapGet("/patients{id}", GetPatientById); // TESTED
+            surgeryGroup.MapPost("/patients", CreatePatient); // TESTED
 
-            surgeryGroup.MapPost("/appointments", CreateAppointment);
-            surgeryGroup.MapPost("/doctors", CreateDoctor);
-            surgeryGroup.MapGet("/appointments", GetAppointments);
+            surgeryGroup.MapPost("/appointments", CreateAppointment); // TESTED
+            surgeryGroup.MapPost("/doctors", CreateDoctor); // TESTED
+            surgeryGroup.MapGet("/appointments", GetAppointments); //TESTED
+            surgeryGroup.MapGet("/appointments{id}", GetAppointmentById); //TESTED
+        }
+
+
+        private static async Task<IResult> GetAppointmentById(IRepository repository, int id)
+        {
+            var app = await repository.GetAppointmentById(id);
+            var appGet = new AppointmentGet(app);
+            return TypedResults.Ok(appGet); 
         }
 
         private static async Task<IResult> GetAppointmentsByPatient(IRepository repository, int id)
@@ -80,9 +89,9 @@ namespace workshop.wwwapi.Endpoints
 
 
 
-            await repository.AddPatient(entity);
+            var result = await repository.AddPatient(entity);
 
-            return TypedResults.Ok(new PatientGet(entity));
+            return TypedResults.Ok(new PatientGet(result));
         }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]

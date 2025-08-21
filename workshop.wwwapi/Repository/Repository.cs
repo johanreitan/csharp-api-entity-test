@@ -12,6 +12,13 @@ namespace workshop.wwwapi.Repository
             _db = db;
         }
 
+        public async Task<Appointment> GetAppointmentById(int id)
+        {
+            var apps = await _db.Appointments.Include(a => a.Patient).Include(b => b.Doctor).Where(c => c.Id == id).ToListAsync();
+            var app = apps.First();
+            return app;
+        }
+
         public async Task<IEnumerable<Appointment>> GetAppointments()
         {
             return await _db.Appointments.Include(a => a.Patient).Include(b => b.Doctor).ToListAsync();
